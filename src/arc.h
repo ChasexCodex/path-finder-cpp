@@ -1,0 +1,4 @@
+#ifndef PATH_FINDER_CPP_ARC_H
+#define PATH_FINDER_CPP_ARC_H
+
+#endif //PATH_FINDER_CPP_ARC_H
