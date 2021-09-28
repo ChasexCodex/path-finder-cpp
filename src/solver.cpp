@@ -5,11 +5,11 @@
 #include <algorithm>
 #include <queue>
 
-Solver::Solver(Point start, Point end, vector<Circle> obstacles) {
+Solver::Solver(Point start, Point end, vector<Circle> _obstacles) {
     begin = new Node(start, nullptr, end);
     finish = new Node(end, nullptr, end);
     finish->isEnd = true;
-    transform(obstacles.begin(), obstacles.end(), back_inserter(this->obstacles), [](Circle circle) {
+    transform(_obstacles.begin(), _obstacles.end(), back_inserter(obstacles), [](Circle circle) {
         return new CircleNode(circle);
     });
 }
@@ -23,6 +23,9 @@ double Solver::Solve() {
         return lhs->EstimatedLength() > rhs->EstimatedLength();
     };
     priority_queue<Node *, vector<Node *>, decltype(comparer)> paths(comparer);
+    for(auto path : beginConnections) {
+        paths.push(path);
+    }
     while (!paths.empty()) {
         auto newNodes = Search(paths.top());
         paths.pop();

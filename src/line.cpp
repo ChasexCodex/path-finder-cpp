@@ -114,6 +114,7 @@ vector<Point> Line::IntersectionWithCircle(Circle circle) {
     transform(xs.begin(), xs.end(), back_inserter(ret), [this](double x) {
         return Point(x, GetY(x));
     });
+    return ret;
 }
 
 vector<Line> Line::Tangents(Point point, Circle circle) {

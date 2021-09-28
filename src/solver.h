@@ -6,11 +6,11 @@
 using namespace std;
 
 class Solver {
-    Node *begin;
-    Node *finish;
+    Node *begin = nullptr;
+    Node *finish = nullptr;
 
-    vector<CircleNode *> obstacles;
-    vector<Node *> beginConnections;
+    vector<CircleNode *> obstacles{};
+    vector<Node *> beginConnections{};
 
     pair<double, bool> StartSolving();
 
