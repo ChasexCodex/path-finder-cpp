@@ -14,4 +14,7 @@ add_executable(path_finder_cpp main.cpp
         src/solver.cpp
         src/helpers.cpp)
 
+find_package(RapidJSON CONFIG REQUIRED)
+target_link_libraries(path_finder_cpp PRIVATE rapidjson)
+
 #add_executable(path_finder_cpp main.cpp function.cpp)
