@@ -10,8 +10,9 @@ double Arc::Length() const {
         case CounterClockwise:
             return (2 * PI - NormalizedAngle(start, circle.ctr, end)) * circle.r;
         case None:
-            throw exception("None occurred");
+            break;
     }
+    throw exception("None occurred");
 }
 
 bool Arc::IntersectsWithCircle(Circle other) const {

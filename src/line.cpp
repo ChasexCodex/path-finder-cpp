@@ -4,10 +4,9 @@
 //    return -1 / slope;
 //}
 
-Line::Line(double slope, double offset)
-        : slope(Limit(slope)), offset(offset) {}
+Line::Line(double slope, double offset) : slope(Limit(slope)), offset(offset) {}
 
-Line::Line(Point a, Point b) {
+Line::Line(PointRef a, PointRef b) {
     if (SamePoint(a, b))
         throw exception("Same Point");
     slope = Limit(((a.y - b.y) / (a.x - b.x)));
@@ -17,7 +16,7 @@ Line::Line(Point a, Point b) {
         offset = a.y - slope * a.x;
 }
 
-Line::Line(double slope, Point has) : slope(Limit(slope)) {
+Line::Line(double slope, PointRef has) : slope(Limit(slope)) {
     if (isinf(slope))
         offset = has.x;
     else
@@ -28,7 +27,7 @@ Line::Line(double slope, Point has) : slope(Limit(slope)) {
 //    return {PerpendicularSlope(), point};
 //}
 
-double Line::DistanceFrom(Point point) {
+double Line::DistanceFrom(PointRef point) const {
     return abs(slope * point.x - point.y + offset) / sqrt(pow2(slope) + 1);
 }
 
@@ -38,13 +37,13 @@ double Line::DistanceFrom(Point point) {
 //    return (y - offset) / slope;
 //}
 
-double Line::GetY(double x) {
+double Line::GetY(double x) const {
     if (isinf(slope))
         return NAN;
     return x * slope + offset;
 }
 
-bool Line::PassesByPoint(Point point) {
+bool Line::PassesByPoint(PointRef point) const {
     if (isinf(slope))
         return DoubleEquals(point.x, offset);
     return DoubleEquals(point.x * slope + offset, point.y);
@@ -61,35 +60,14 @@ bool Line::PassesByPoint(Point point) {
 //    return new Point(x, GetY(x));
 //}
 
-Line *Line::IntersectionLineOfTwoCircles(Circle a, Circle b) {
-    auto distance = DistanceBetween(a.ctr, b.ctr);
-    if (DoubleEquals(distance, 0))
-        return nullptr;
-    auto radii = a.r + b.r;
-    if (distance > radii)
-        return nullptr;
-    if (DoubleEquals(distance, radii)) {
-        return new Line(
-                -(a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
-                RelativePoint(a.ctr, a.r / (radii), b.ctr));
-    }
-
-    if (DoubleEquals(a.ctr.y, b.ctr.y))
-        return new Line(INFINITY, ((b.ctr.x + a.ctr.x) + DifferenceOfSquares(a.r, b.r) / (b.ctr.x - a.ctr.x)) / 2);
-    return new Line((a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
-                    (DifferenceOfSquares(b.ctr.x, a.ctr.x) + DifferenceOfSquares(b.ctr.y, a.ctr.y) +
-                     DifferenceOfSquares(a.r, b.r))
-                    / (2 * (b.ctr.y - a.ctr.y)));
-}
-
-Point Line::PointOfTangency(Circle circle) {
+Point Line::PointOfTangency(CircleRef circle) const {
     if (isinf(slope))
         return {offset, circle.ctr.y};
     auto x = (circle.ctr.x - slope * (offset - circle.ctr.y)) / (1 + pow2(slope));
     return {x, GetY(x)};
 }
 
-vector<Point> Line::IntersectionWithCircle(Circle circle) {
+vector<Point> Line::IntersectionWithCircle(CircleRef circle) const {
     double distance = DistanceFrom(circle.ctr);
     if (distance > circle.r)
         return {};
@@ -117,7 +95,28 @@ vector<Point> Line::IntersectionWithCircle(Circle circle) {
     return ret;
 }
 
-vector<Line> Line::Tangents(Point point, Circle circle) {
+Line *Line::IntersectionLineOfTwoCircles(CircleRef a, CircleRef b) {
+    auto distance = DistanceBetween(a.ctr, b.ctr);
+    if (DoubleEquals(distance, 0))
+        return nullptr;
+    auto radii = a.r + b.r;
+    if (distance > radii)
+        return nullptr;
+    if (DoubleEquals(distance, radii)) {
+        return new Line(
+                -(a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
+                RelativePoint(a.ctr, a.r / (radii), b.ctr));
+    }
+
+    if (DoubleEquals(a.ctr.y, b.ctr.y))
+        return new Line(INFINITY, ((b.ctr.x + a.ctr.x) + DifferenceOfSquares(a.r, b.r) / (b.ctr.x - a.ctr.x)) / 2);
+    return new Line((a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
+                    (DifferenceOfSquares(b.ctr.x, a.ctr.x) + DifferenceOfSquares(b.ctr.y, a.ctr.y) +
+                     DifferenceOfSquares(a.r, b.r))
+                    / (2 * (b.ctr.y - a.ctr.y)));
+}
+
+vector<Line> Line::Tangents(PointRef point, CircleRef circle) {
     double distance = DistanceBetween(point, circle.ctr);
 
     if (distance < circle.r)
@@ -132,14 +131,14 @@ vector<Line> Line::Tangents(Point point, Circle circle) {
     };
 }
 
-vector<Line> Line::CommonTangents(Circle a, Circle b) {
+vector<Line> Line::CommonTangents(CircleRef a, CircleRef b) {
     auto distance = DistanceBetween(a.ctr, b.ctr);
 
     if (DoubleEquals(distance, 0))
         return {};
 
-    Circle &biggest = a.r > b.r ? a : b;
-    Circle &smallest = a.r < b.r ? a : b;
+    CircleRef biggest = a.r > b.r ? a : b;
+    CircleRef smallest = a.r < b.r ? a : b;
 
     if (distance + smallest.r <= biggest.r)
         return {};
@@ -157,11 +156,9 @@ vector<Line> Line::CommonTangents(Circle a, Circle b) {
                     1,
                     -2 * cross.offset,
                     pow2(cross.offset) - pow2(a.r) * (1 + pow2(cross.slope)));
-            vector<Line> add;
-            transform(result.begin(), result.end(), back_inserter(add), [cross](double _offset) {
-                return Line(cross.slope, _offset);
-            });
-            ret.insert(ret.end(), add.begin(), add.end());
+            for (const auto _offset: result) {
+                ret.emplace_back(cross.slope, _offset);
+            }
         }
     } else {
         double r1 = smallest.r / biggest.r;

@@ -12,10 +12,10 @@ const double ZERO_THRESHOLD = 1.0E-10;
 const double INFINITY_THRESHOLD = 1.0E+10;
 const double PI = 3.14159265358979;
 
-typedef const Point& PointRef;
-typedef const Circle& CircleRef;
+typedef const Point &PointRef;
+typedef const Circle &CircleRef;
 
-#define pow2(x) pow(x, 2)
+#define pow2(x) ((x)*(x))
 
 //bool DoubleEquals(double x, double y);
 #define DoubleEquals(x, y) (abs((x) - (y)) < ZERO_THRESHOLD)
@@ -40,11 +40,13 @@ Point RelativePoint(PointRef start, double ratio, PointRef end);
 //bool InRangeExclusive(double min, double target, double max);
 #define InRangeExclusive(min, target, max) ((min) < (target) && (target) < (max))
 
-double NormalizeAngle(double rad);
+//double NormalizeAngle(double rad);
+#define NormalizeAngle(rad) ((rad) >= 0 ? (rad) : 2 * PI + (rad))
 
 double Angle(PointRef a, PointRef b, PointRef c);
 
-double NormalizedAngle(PointRef a, PointRef b, PointRef c);
+//double NormalizedAngle(PointRef a, PointRef b, PointRef c);
+#define NormalizedAngle(a, b, c) (NormalizeAngle(Angle(a, b, c)))
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse = false);
 

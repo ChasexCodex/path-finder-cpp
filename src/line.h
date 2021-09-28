@@ -13,31 +13,31 @@ struct Line {
 
     Line(double slope, double offset);
 
-    Line(Point a, Point b);
+    Line(PointRef a, PointRef b);
 
-    Line(double slope, Point has);
+    Line(double slope, PointRef has);
 
 //    Line PerpendicularAt(Point point);
 
-    double DistanceFrom(Point point);
+    [[nodiscard]] double DistanceFrom(PointRef point) const;
 
 //    double GetX(double y);
 
-    double GetY(double x);
+    [[nodiscard]] double GetY(double x) const;
 
-    bool PassesByPoint(Point point);
+    [[nodiscard]] bool PassesByPoint(PointRef point) const;
 
 //    Point *IntersectionWithLine(Line line);
 
-    static Line *IntersectionLineOfTwoCircles(Circle a, Circle b);
+    [[nodiscard]] Point PointOfTangency(CircleRef circle) const;
 
-    Point PointOfTangency(Circle circle);
+    [[nodiscard]] vector<Point> IntersectionWithCircle(CircleRef circle) const;
 
-    vector<Point> IntersectionWithCircle(Circle circle);
+    static Line *IntersectionLineOfTwoCircles(CircleRef a, CircleRef b);
 
-    static vector<Line> Tangents(Point point, Circle circle);
+    static vector<Line> Tangents(PointRef point, CircleRef circle);
 
-    static vector<Line> CommonTangents(Circle a, Circle b);
+    static vector<Line> CommonTangents(CircleRef a, CircleRef b);
 };
 
 #endif //PATH_FINDER_CPP_LINE_H

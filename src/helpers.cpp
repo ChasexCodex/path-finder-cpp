@@ -34,15 +34,15 @@ Point RelativePoint(PointRef start, double ratio, PointRef end) {
 
 //bool InRangeExclusive(double min, double target, double max) { return min < target && target < max; }
 
-double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
+//double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
 
 double Angle(PointRef a, PointRef b, PointRef c) {
     return atan2(a.y - b.y, a.x - b.x) - atan2(c.y - b.y, c.x - b.x);
 }
 
-double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
-    return NormalizeAngle(Angle(a, b, c));
-}
+//double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
+//    return NormalizeAngle(Angle(a, b, c));
+//}
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {
     if (SamePoint(point, resolver))
