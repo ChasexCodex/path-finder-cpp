@@ -44,7 +44,7 @@ bool Arc::ContainsPointUnchecked(Point point) {
             if(startAngle < endAngle)
                 return InRangeExclusive(startAngle, angle, endAngle);
             return !InRangeExclusive(endAngle, angle, startAngle);
-        case None:
+        default:
             throw exception("None occurred");
     }
 }

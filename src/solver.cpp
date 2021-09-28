@@ -1,4 +1,9 @@
 #include "solver.h"
+#include "segment.h"
+
+#include <vector>
+#include <algorithm>
+#include <queue>
 
 Solver::Solver(Point start, Point end, vector<Circle> obstacles) {
     begin = new Node(start, nullptr, end);
@@ -36,8 +41,8 @@ double Solver::Solve() {
 
 pair<double, bool> Solver::StartSolving() {
     auto illegalPoint = [](Point point) {
-        return [point](Circle circle) {
-            return CircleContainsPoint(circle, point);
+        return [point](CircleNode* circle) {
+            return CircleContainsPoint(*circle, point);
         };
     };
 

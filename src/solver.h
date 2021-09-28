@@ -1,13 +1,7 @@
 #ifndef PATH_FINDER_CPP_SOLVER_H
 #define PATH_FINDER_CPP_SOLVER_H
 
-#include <vector>
-#include <algorithm>
-#include <functional>
-#include <queue>
-
 #include "node.h"
-#include "segment.h"
 
 using namespace std;
 

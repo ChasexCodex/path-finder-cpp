@@ -19,11 +19,11 @@ Direction Node::GetDirection(Point resolver, bool inverse) {
 }
 
 Direction Node::GetDirectionParent() {
-    ::GetDirection(*this, *parent, container->ctr);
+    return ::GetDirection(*this, *parent, container->ctr);
 }
 
 Arc Node::MakeArc(Point end) {
-    return {*this, end, GetDirectionParent(), *container};
+    return Arc{*this, end, GetDirectionParent(), *container};
 }
 
 double Node::EstimatedLength() { return distance + heuristic; }

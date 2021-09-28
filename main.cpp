@@ -2,9 +2,13 @@
 #include "src/solver.h"
 
 int main() {
-    Solver solver;
-    auto result = solver.Solve();
+    Solver solver({-2, 0}, {2, 0}, {{0,0,1}});
+    try {
+        auto result = solver.Solve();
 
-    std::cout << result << std::endl;
+        cout << result << endl;
+    } catch (...) {
+        cout << "Error occurred" << endl;
+    }
     return 0;
 }
