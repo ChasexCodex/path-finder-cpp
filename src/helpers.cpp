@@ -10,7 +10,7 @@ double Limit(double x) {
 
 //bool Infinity(double x) { return isinf(x); }
 
-double DistanceBetween(Point a, Point b) { return sqrt(pow2(a.x - b.x) + pow2(a.y - b.y)); }
+double DistanceBetween(PointRef a, PointRef b) { return sqrt(pow2(a.x - b.x) + pow2(a.y - b.y)); }
 
 double DifferenceOfSquares(double operand1, double operand2) { return (operand1 + operand2) * (operand1 - operand2); }
 
@@ -24,9 +24,9 @@ vector<double> QuadraticEquation(double a, double b, double c) {
     return {(-b + delta) / (2 * a), (-b - delta) / (2 * a)};
 }
 
-bool SamePoint(Point a, Point b) { return DoubleEquals(a.x, b.x) && DoubleEquals(a.y, b.y); }
+bool SamePoint(PointRef a, PointRef b) { return DoubleEquals(a.x, b.x) && DoubleEquals(a.y, b.y); }
 
-Point RelativePoint(Point start, double ratio, Point end) {
+Point RelativePoint(PointRef start, double ratio, PointRef end) {
     return {start.x * (1 - ratio) + end.x * ratio, start.y * (1 - ratio) + end.y * ratio};
 }
 
@@ -36,15 +36,15 @@ Point RelativePoint(Point start, double ratio, Point end) {
 
 double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
 
-double Angle(Point a, Point b, Point c) {
+double Angle(PointRef a, PointRef b, PointRef c) {
     return atan2(a.y - b.y, a.x - b.x) - atan2(c.y - b.y, c.x - b.x);
 }
 
-double NormalizedAngle(Point a, Point b, Point c) {
+double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
     return NormalizeAngle(Angle(a, b, c));
 }
 
-Direction GetDirection(Point point, Point resolver, Point center, bool inverse) {
+Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {
     if (SamePoint(point, resolver))
         throw exception("Can't determine the direction");
 
@@ -65,12 +65,12 @@ Direction GetDirection(Point point, Point resolver, Point center, bool inverse) 
 
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
 
-bool PointOnCircleEdge(Circle circle, Point point) {
+bool PointOnCircleEdge(CircleRef circle, PointRef point) {
     return DoubleEquals(pow2(circle.ctr.x - point.x) + pow2(circle.ctr.y - point.y), pow2(circle.r));
 }
 
 #endif
 
-bool CircleContainsPoint(Circle circle, Point point) {
+bool CircleContainsPoint(CircleRef circle, PointRef point) {
     return pow2(circle.ctr.x - point.x) + pow2(circle.ctr.y - point.y) < pow2(circle.r);
 }

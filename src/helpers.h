@@ -12,6 +12,9 @@ const double ZERO_THRESHOLD = 1.0E-10;
 const double INFINITY_THRESHOLD = 1.0E+10;
 const double PI = 3.14159265358979;
 
+typedef const Point& PointRef;
+typedef const Circle& CircleRef;
+
 #define pow2(x) pow(x, 2)
 
 //bool DoubleEquals(double x, double y);
@@ -21,15 +24,15 @@ double Limit(double x);
 
 //bool Infinity(double x);
 
-double DistanceBetween(Point a, Point b);
+double DistanceBetween(PointRef a, PointRef b);
 
 double DifferenceOfSquares(double operand1, double operand2);
 
 vector<double> QuadraticEquation(double a, double b, double c);
 
-bool SamePoint(Point a, Point b);
+bool SamePoint(PointRef a, PointRef b);
 
-Point RelativePoint(Point start, double ratio, Point end);
+Point RelativePoint(PointRef start, double ratio, PointRef end);
 
 //bool InRangeInclusive(double min, double target, double max);
 #define InRangeInclusive(min, target, max) ((min) <= (target) && (target) <= (max))
@@ -39,17 +42,17 @@ Point RelativePoint(Point start, double ratio, Point end);
 
 double NormalizeAngle(double rad);
 
-double Angle(Point a, Point b, Point c);
+double Angle(PointRef a, PointRef b, PointRef c);
 
-double NormalizedAngle(Point a, Point b, Point c);
+double NormalizedAngle(PointRef a, PointRef b, PointRef c);
 
-Direction GetDirection(Point point, Point resolver, Point center, bool inverse = false);
+Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse = false);
 
-bool CircleContainsPoint(Circle circle, Point point);
+bool CircleContainsPoint(CircleRef circle, PointRef point);
 
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
 
-bool PointOnCircleEdge(Circle circle, Point point);
+bool PointOnCircleEdge(CircleRef circle, PointRef point);
 
 #endif
 
