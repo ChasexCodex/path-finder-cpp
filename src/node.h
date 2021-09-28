@@ -8,10 +8,10 @@
 struct Node : public Point {
     double distance = INFINITY;
     double heuristic = 0;
-    bool isEnd = false;
     bool visited = false;
     CircleNode *container = nullptr;
     Node *parent = nullptr;
+    Direction presetDirection = None;
 
     Node(Point point, CircleNode *container, Point end);
 
@@ -24,6 +24,8 @@ struct Node : public Point {
     Arc MakeArc(Point end);
 
     double EstimatedLength();
+
+    void SetDirection(Direction direction);
 };
 
 #endif //PATH_FINDER_CPP_NODE_H

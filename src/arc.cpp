@@ -20,9 +20,9 @@ bool Arc::IntersectsWithCircle(Circle other) {
         return false;
 
     auto result = intersectionLine->IntersectionWithCircle(circle);
-    if(result.empty())
+    if (result.empty())
         return false;
-    return find_if(result.begin(),  result.end(), [this](Point point){
+    return find_if(result.begin(), result.end(), [this](Point point) {
         return ContainsPointUnchecked(point);
     }) != result.end();
 }
@@ -37,11 +37,11 @@ bool Arc::ContainsPointUnchecked(Point point) {
 
     switch (direction) {
         case Clockwise:
-            if(startAngle > endAngle)
+            if (startAngle > endAngle)
                 return InRangeExclusive(endAngle, angle, startAngle);
             return !InRangeExclusive(startAngle, angle, endAngle);
         case CounterClockwise:
-            if(startAngle < endAngle)
+            if (startAngle < endAngle)
                 return InRangeExclusive(startAngle, angle, endAngle);
             return !InRangeExclusive(endAngle, angle, startAngle);
         default:

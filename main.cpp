@@ -2,13 +2,19 @@
 #include "src/solver.h"
 
 int main() {
-    Solver solver({-2, 0}, {2, 0}, {{0,0,1}});
+//    Solver solver({-10, 0}, {10, 0}, {
+//            {-6, 0, 2},
+//            {6,  0, 2},
+//            {0,  0, 3},
+//    });
+
+    Solver solver({-1, 0}, {0, 1}, {{0, 0, 1}});
+
     try {
         auto result = solver.Solve();
-
-        cout << result << endl;
+        printf("%.15f", result);
     } catch (...) {
-        cout << "Error occurred" << endl;
+        cout << "An error occurred" << endl;
     }
     return 0;
 }

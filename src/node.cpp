@@ -15,11 +15,11 @@ bool Node::SetNewDistance(double newDistance) {
 }
 
 Direction Node::GetDirection(Point resolver, bool inverse) {
-    return ::GetDirection(*this, resolver, container->ctr, inverse);
+    return presetDirection ? presetDirection : ::GetDirection(*this, resolver, container->ctr, inverse);
 }
 
 Direction Node::GetDirectionParent() {
-    return ::GetDirection(*this, *parent, container->ctr);
+    return presetDirection ? presetDirection : ::GetDirection(*this, *parent, container->ctr);
 }
 
 Arc Node::MakeArc(Point end) {
@@ -27,3 +27,7 @@ Arc Node::MakeArc(Point end) {
 }
 
 double Node::EstimatedLength() { return distance + heuristic; }
+
+void Node::SetDirection(Direction direction) {
+    presetDirection = direction;
+}

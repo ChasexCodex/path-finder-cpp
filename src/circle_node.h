@@ -5,12 +5,14 @@
 #include "circle.h"
 
 struct Node;
-typedef std::pair<Node*, Node*> Connection;
+typedef std::pair<Node *, Node *> Connection;
 
 struct CircleNode : public Circle {
     bool generated = false;
     std::vector<Connection> connections{};
+
     void AddConnection(Connection connection);
+
     explicit CircleNode(Circle circle);
 };
 

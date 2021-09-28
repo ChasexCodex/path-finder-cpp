@@ -8,7 +8,6 @@
 Solver::Solver(Point start, Point end, vector<Circle> _obstacles) {
     begin = new Node(start, nullptr, end);
     finish = new Node(end, nullptr, end);
-    finish->isEnd = true;
     transform(_obstacles.begin(), _obstacles.end(), back_inserter(obstacles), [](Circle circle) {
         return new CircleNode(circle);
     });
@@ -23,7 +22,7 @@ double Solver::Solve() {
         return lhs->EstimatedLength() > rhs->EstimatedLength();
     };
     priority_queue<Node *, vector<Node *>, decltype(comparer)> paths(comparer);
-    for(auto path : beginConnections) {
+    for (auto path: beginConnections) {
         paths.push(path);
     }
     while (!paths.empty()) {
@@ -44,7 +43,7 @@ double Solver::Solve() {
 
 pair<double, bool> Solver::StartSolving() {
     auto illegalPoint = [](Point point) {
-        return [point](CircleNode* circle) {
+        return [point](CircleNode *circle) {
             return CircleContainsPoint(*circle, point);
         };
     };
@@ -73,46 +72,68 @@ void Solver::GenerateMap() {
     for (int i = 0; i < size; i++) {
         auto obstacle = obstacles[i];
         // begin connections
-        for (auto tangent: Line::Tangents(*begin, *obstacle)) {
-            auto pointOfTangency = tangent.PointOfTangency(*obstacle);
-            Segment segment(*begin, pointOfTangency);
 
-            bool skip = false;
-            for (int j = 0; j < size; j++) {
-                if (i == j) continue;
-                if (segment.IntersectsWithCircle(*obstacles[j])) {
-                    skip = true;
-                    break;
-                }
+#if INCLUDE_POINT_ON_CIRCLE_EDGE
+        if (PointOnCircleEdge(*obstacle, *begin)) {
+            for (auto direction: {Clockwise, CounterClockwise}) {
+                auto node = new Node(*begin, obstacle, *finish);
+                node->SetDirection(direction);
+                node->SetNewDistance(0);
+                beginConnections.push_back(node);
             }
+        } else
+#endif
 
-            if (skip) continue;
+            for (auto tangent: Line::Tangents(*begin, *obstacle)) {
+                auto pointOfTangency = tangent.PointOfTangency(*obstacle);
+                Segment segment(*begin, pointOfTangency);
 
-            auto node = new Node(pointOfTangency, obstacles[i], *finish);
-            node->SetNewDistance(DistanceBetween(*begin, pointOfTangency));
-            node->parent = begin;
-            beginConnections.push_back(node);
-        }
+                bool skip = false;
+                for (int j = 0; j < size; j++) {
+                    if (i == j) continue;
+                    if (segment.IntersectsWithCircle(*obstacles[j])) {
+                        skip = true;
+                        break;
+                    }
+                }
+
+                if (skip) continue;
+
+                auto node = new Node(pointOfTangency, obstacles[i], *finish);
+                node->SetNewDistance(DistanceBetween(*begin, pointOfTangency));
+                node->parent = begin;
+                beginConnections.push_back(node);
+            }
 
         // finish connections
-        for (auto tangent: Line::Tangents(*finish, *obstacle)) {
-            auto pointOfTangency = tangent.PointOfTangency(*obstacle);
-            Segment segment(pointOfTangency, *finish);
-
-            bool skip = false;
-            for (int j = 0; j < size; j++) {
-                if (i == j) continue;
-                if (segment.IntersectsWithCircle(*obstacles[j])) {
-                    skip = true;
-                    break;
-                }
+#if INCLUDE_POINT_ON_CIRCLE_EDGE
+        if (PointOnCircleEdge(*obstacle, *finish)) {
+            for (auto direction: {Clockwise, CounterClockwise}) {
+                auto node = new Node(*finish, obstacle, *finish);
+                node->SetDirection(direction);
+                obstacle->AddConnection({node, finish});
             }
+        } else
+#endif
 
-            if (skip) continue;
+            for (auto tangent: Line::Tangents(*finish, *obstacle)) {
+                auto pointOfTangency = tangent.PointOfTangency(*obstacle);
+                Segment segment(pointOfTangency, *finish);
 
-            auto node = new Node(pointOfTangency, obstacles[i], *finish);
-            obstacles[i]->AddConnection({node, finish});
-        }
+                bool skip = false;
+                for (int j = 0; j < size; j++) {
+                    if (i == j) continue;
+                    if (segment.IntersectsWithCircle(*obstacles[j])) {
+                        skip = true;
+                        break;
+                    }
+                }
+
+                if (skip) continue;
+
+                auto node = new Node(pointOfTangency, obstacles[i], *finish);
+                obstacles[i]->AddConnection({node, finish});
+            }
     }
 }
 

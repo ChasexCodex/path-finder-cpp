@@ -44,6 +44,10 @@ Direction GetDirection(Point point, Point resolver, Point center, bool inverse =
 
 bool CircleContainsPoint(Circle circle, Point point);
 
+#if INCLUDE_POINT_ON_CIRCLE_EDGE
+
 bool PointOnCircleEdge(Circle circle, Point point);
+
+#endif
 
 #endif //PATH_FINDER_CPP_HELPERS_H

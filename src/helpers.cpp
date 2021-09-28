@@ -63,9 +63,13 @@ Direction GetDirection(Point point, Point resolver, Point center, bool inverse) 
     return (Direction) i;
 }
 
+#if INCLUDE_POINT_ON_CIRCLE_EDGE
+
 bool PointOnCircleEdge(Circle circle, Point point) {
-    return DoubleEquals(DistanceBetween(point, circle.ctr), pow2(circle.r));
+    return DoubleEquals(pow2(circle.ctr.x - point.x) + pow2(circle.ctr.y - point.y), pow2(circle.r));
 }
+
+#endif
 
 bool CircleContainsPoint(Circle circle, Point point) {
     return pow2(circle.ctr.x - point.x) + pow2(circle.ctr.y - point.y) < pow2(circle.r);

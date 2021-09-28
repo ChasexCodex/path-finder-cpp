@@ -3,6 +3,8 @@ project(path_finder_cpp)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
+
 add_executable(path_finder_cpp main.cpp
         src/arc.cpp
         src/circle_node.cpp
