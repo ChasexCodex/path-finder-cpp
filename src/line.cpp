@@ -1,8 +1,8 @@
 #include "line.h"
 
-double Line::PerpendicularSlope() {
-    return -1 / slope;
-}
+//double Line::PerpendicularSlope() {
+//    return -1 / slope;
+//}
 
 Line::Line(double slope, double offset)
         : slope(Limit(slope)), offset(offset) {}
@@ -11,55 +11,55 @@ Line::Line(Point a, Point b) {
     if (SamePoint(a, b))
         throw exception("Same Point");
     slope = Limit(((a.y - b.y) / (a.x - b.x)));
-    if (Infinity(slope))
+    if (isinf(slope))
         offset = a.x;
     else
         offset = a.y - slope * a.x;
 }
 
 Line::Line(double slope, Point has) : slope(Limit(slope)) {
-    if (Infinity(slope))
+    if (isinf(slope))
         offset = has.x;
     else
         offset = has.y - slope * has.x;
 }
 
-Line Line::PerpendicularAt(Point point) {
-    return {PerpendicularSlope(), point};
-}
+//Line Line::PerpendicularAt(Point point) {
+//    return {PerpendicularSlope(), point};
+//}
 
 double Line::DistanceFrom(Point point) {
     return abs(slope * point.x - point.y + offset) / sqrt(pow2(slope) + 1);
 }
 
-double Line::GetX(double y) {
-    if (slope == 0)
-        return NAN;
-    return (y - offset) / slope;
-}
+//double Line::GetX(double y) {
+//    if (slope == 0)
+//        return NAN;
+//    return (y - offset) / slope;
+//}
 
 double Line::GetY(double x) {
-    if (Infinity(slope))
+    if (isinf(slope))
         return NAN;
     return x * slope + offset;
 }
 
 bool Line::PassesByPoint(Point point) {
-    if (Infinity(slope))
+    if (isinf(slope))
         return DoubleEquals(point.x, offset);
     return DoubleEquals(point.x * slope + offset, point.y);
 }
 
-Point *Line::IntersectionWithLine(Line line) {
-    if (DoubleEquals(slope, line.slope))
-        return nullptr;
-    if (slope == 0)
-        return new Point(line.GetX(offset), offset);
-    if (Infinity(slope))
-        return new Point(offset, line.GetY(offset));
-    double x = -(offset - line.offset) / (slope - line.slope);
-    return new Point(x, GetY(x));
-}
+//Point *Line::IntersectionWithLine(Line line) {
+//    if (DoubleEquals(slope, line.slope))
+//        return nullptr;
+//    if (slope == 0)
+//        return new Point(line.GetX(offset), offset);
+//    if (isinf(slope))
+//        return new Point(offset, line.GetY(offset));
+//    double x = -(offset - line.offset) / (slope - line.slope);
+//    return new Point(x, GetY(x));
+//}
 
 Line *Line::IntersectionLineOfTwoCircles(Circle a, Circle b) {
     auto distance = DistanceBetween(a.ctr, b.ctr);
@@ -83,7 +83,7 @@ Line *Line::IntersectionLineOfTwoCircles(Circle a, Circle b) {
 }
 
 Point Line::PointOfTangency(Circle circle) {
-    if (Infinity(slope))
+    if (isinf(slope))
         return {offset, circle.ctr.y};
     auto x = (circle.ctr.x - slope * (offset - circle.ctr.y)) / (1 + pow2(slope));
     return {x, GetY(x)};
@@ -98,7 +98,7 @@ vector<Point> Line::IntersectionWithCircle(Circle circle) {
 
     vector<double> xs;
 
-    if (Infinity(slope)) {
+    if (isinf(slope)) {
         xs = QuadraticEquation(
                 1,
                 -2 * circle.ctr.y,

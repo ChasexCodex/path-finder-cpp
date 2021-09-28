@@ -1,7 +1,7 @@
 #include "node.h"
 
 Node::Node(Point point, CircleNode *container, Point end)
-        : Point(point.x, point.y), container(container) {
+        : point(point.x, point.y), container(container) {
     heuristic = DistanceBetween(point, end);
 }
 
@@ -15,15 +15,15 @@ bool Node::SetNewDistance(double newDistance) {
 }
 
 Direction Node::GetDirection(Point resolver, bool inverse) {
-    return presetDirection ? presetDirection : ::GetDirection(*this, resolver, container->ctr, inverse);
+    return presetDirection ? presetDirection : ::GetDirection(point, resolver, container->circle.ctr, inverse);
 }
 
 Direction Node::GetDirectionParent() {
-    return presetDirection ? presetDirection : ::GetDirection(*this, *parent, container->ctr);
+    return presetDirection ? presetDirection : ::GetDirection(point, parent->point, container->circle.ctr);
 }
 
 Arc Node::MakeArc(Point end) {
-    return Arc{*this, end, GetDirectionParent(), *container};
+    return Arc{point, end, GetDirectionParent(), container->circle};
 }
 
 double Node::EstimatedLength() { return distance + heuristic; }

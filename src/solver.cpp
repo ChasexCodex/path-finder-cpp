@@ -8,13 +8,13 @@
 Solver::Solver(Point start, Point end, vector<Circle> _obstacles) {
     begin = new Node(start, nullptr, end);
     finish = new Node(end, nullptr, end);
-    transform(_obstacles.begin(), _obstacles.end(), back_inserter(obstacles), [](Circle circle) {
+    transform(_obstacles.begin(), _obstacles.end(), back_inserter(obstacles), [](const Circle& circle) {
         return new CircleNode(circle);
     });
 }
 
 double Solver::Solve() {
-    auto result = StartSolving();
+    const auto result = StartSolving();
     if (result.second)
         return result.first;
 
@@ -22,13 +22,13 @@ double Solver::Solve() {
         return lhs->EstimatedLength() > rhs->EstimatedLength();
     };
     priority_queue<Node *, vector<Node *>, decltype(comparer)> paths(comparer);
-    for (auto path: beginConnections) {
+    for (const auto& path: beginConnections) {
         paths.push(path);
     }
     while (!paths.empty()) {
         auto newNodes = Search(paths.top());
         paths.pop();
-        bool found = !Infinity(finish->distance);
+        bool found = !isinf(finish->distance);
         for (const auto newNode: newNodes) {
             if (found) {
                 if (newNode->EstimatedLength() >= finish->distance)
@@ -38,29 +38,29 @@ double Solver::Solve() {
         }
     }
 
-    return Infinity(finish->distance) ? -1 : finish->distance;
+    return isinf(finish->distance) ? -1 : finish->distance;
 }
 
 pair<double, bool> Solver::StartSolving() {
     auto illegalPoint = [](Point point) {
-        return [point](CircleNode *circle) {
-            return CircleContainsPoint(*circle, point);
+        return [point](CircleNode *circleNode) {
+            return CircleContainsPoint(circleNode->circle, point);
         };
     };
 
-    if (find_if(obstacles.begin(), obstacles.end(), illegalPoint(*begin)) != obstacles.end())
+    if (any_of(obstacles.begin(), obstacles.end(), illegalPoint(begin->point)))
         return {-1, true};
-    if (find_if(obstacles.begin(), obstacles.end(), illegalPoint(*begin)) != obstacles.end())
+    if (any_of(obstacles.begin(), obstacles.end(), illegalPoint(finish->point)))
         return {-1, true};
 
 
-    Segment cross(*begin, *finish);
+    Segment cross(begin->point, finish->point);
     auto crossIntersect = [&cross](CircleNode *circleNode) {
-        return cross.IntersectsWithCircle(*circleNode);
+        return cross.IntersectsWithCircle(circleNode->circle);
     };
 
-    if (find_if(obstacles.begin(), obstacles.end(), crossIntersect) == obstacles.end()) {
-        return {DistanceBetween(*begin, *finish), true};
+    if (!any_of(obstacles.begin(), obstacles.end(), crossIntersect)) {
+        return {DistanceBetween(begin->point, finish->point), true};
     }
 
     GenerateMap();
@@ -74,9 +74,9 @@ void Solver::GenerateMap() {
         // begin connections
 
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
-        if (PointOnCircleEdge(*obstacle, *begin)) {
+        if (PointOnCircleEdge(obstacle->circle, begin->point)) {
             for (auto direction: {Clockwise, CounterClockwise}) {
-                auto node = new Node(*begin, obstacle, *finish);
+                auto node = new Node(begin->point, obstacle, finish->point);
                 node->SetDirection(direction);
                 node->SetNewDistance(0);
                 beginConnections.push_back(node);
@@ -84,14 +84,14 @@ void Solver::GenerateMap() {
         } else
 #endif
 
-            for (auto tangent: Line::Tangents(*begin, *obstacle)) {
-                auto pointOfTangency = tangent.PointOfTangency(*obstacle);
-                Segment segment(*begin, pointOfTangency);
+            for (auto tangent: Line::Tangents(begin->point, obstacle->circle)) {
+                auto pointOfTangency = tangent.PointOfTangency(obstacle->circle);
+                Segment segment(begin->point, pointOfTangency);
 
                 bool skip = false;
                 for (int j = 0; j < size; j++) {
                     if (i == j) continue;
-                    if (segment.IntersectsWithCircle(*obstacles[j])) {
+                    if (segment.IntersectsWithCircle(obstacles[j]->circle)) {
                         skip = true;
                         break;
                     }
@@ -99,31 +99,31 @@ void Solver::GenerateMap() {
 
                 if (skip) continue;
 
-                auto node = new Node(pointOfTangency, obstacles[i], *finish);
-                node->SetNewDistance(DistanceBetween(*begin, pointOfTangency));
+                auto node = new Node(pointOfTangency, obstacles[i], finish->point);
+                node->SetNewDistance(DistanceBetween(begin->point, pointOfTangency));
                 node->parent = begin;
                 beginConnections.push_back(node);
             }
 
         // finish connections
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
-        if (PointOnCircleEdge(*obstacle, *finish)) {
+        if (PointOnCircleEdge(obstacle->circle, finish->point)) {
             for (auto direction: {Clockwise, CounterClockwise}) {
-                auto node = new Node(*finish, obstacle, *finish);
+                auto node = new Node(finish->point, obstacle, finish->point);
                 node->SetDirection(direction);
                 obstacle->AddConnection({node, finish});
             }
         } else
 #endif
 
-            for (auto tangent: Line::Tangents(*finish, *obstacle)) {
-                auto pointOfTangency = tangent.PointOfTangency(*obstacle);
-                Segment segment(pointOfTangency, *finish);
+            for (auto tangent: Line::Tangents(finish->point, obstacle->circle)) {
+                auto pointOfTangency = tangent.PointOfTangency(obstacle->circle);
+                Segment segment(pointOfTangency, finish->point);
 
                 bool skip = false;
                 for (int j = 0; j < size; j++) {
                     if (i == j) continue;
-                    if (segment.IntersectsWithCircle(*obstacles[j])) {
+                    if (segment.IntersectsWithCircle(obstacles[j]->circle)) {
                         skip = true;
                         break;
                     }
@@ -131,7 +131,7 @@ void Solver::GenerateMap() {
 
                 if (skip) continue;
 
-                auto node = new Node(pointOfTangency, obstacles[i], *finish);
+                auto node = new Node(pointOfTangency, obstacles[i], finish->point);
                 obstacles[i]->AddConnection({node, finish});
             }
     }
@@ -142,16 +142,16 @@ void Solver::GenerateCircleNodeConnections(CircleNode *circleNode) {
     for (auto obstacle: obstacles) {
         if (obstacle->generated)
             continue;
-        for (auto tangent: Line::CommonTangents(*circleNode, *obstacle)) {
-            auto pot1 = tangent.PointOfTangency(*circleNode);
-            auto pot2 = tangent.PointOfTangency(*obstacle);
+        for (auto tangent: Line::CommonTangents(circleNode->circle, obstacle->circle)) {
+            auto pot1 = tangent.PointOfTangency(circleNode->circle);
+            auto pot2 = tangent.PointOfTangency(obstacle->circle);
             Segment segment(pot1, pot2);
 
             bool skip = false;
             for (auto other: obstacles) {
                 if (other == circleNode || other == obstacle)
                     continue;
-                if (segment.IntersectsWithCircle(*other)) {
+                if (segment.IntersectsWithCircle(other->circle)) {
                     skip = true;
                     break;
                 }
@@ -159,8 +159,8 @@ void Solver::GenerateCircleNodeConnections(CircleNode *circleNode) {
 
             if (skip) continue;
 
-            auto node1 = new Node(pot1, circleNode, *finish);
-            auto node2 = new Node(pot2, obstacle, *finish);
+            auto node1 = new Node(pot1, circleNode, finish->point);
+            auto node2 = new Node(pot2, obstacle, finish->point);
             circleNode->AddConnection({node1, node2});
             obstacle->AddConnection({node2, node1});
         }
@@ -185,15 +185,15 @@ vector<Node *> Solver::Search(Node *node) {
         auto item1 = tuple.first;
         auto item2 = tuple.second;
 
-        if (node->GetDirectionParent() != item1->GetDirection(*item2, true))
+        if (node->GetDirectionParent() != item1->GetDirection(item2->point, true))
             continue;
 
-        Arc arc = node->MakeArc(*item1);
+        Arc arc = node->MakeArc(item1->point);
         bool skip = false;
         for (auto obstacle: obstacles) {
             if (obstacle == node->container)
                 continue;
-            if (arc.IntersectsWithCircle(*obstacle)) {
+            if (arc.IntersectsWithCircle(obstacle->circle)) {
                 skip = true;
                 break;
             }
@@ -205,7 +205,7 @@ vector<Node *> Solver::Search(Node *node) {
 
         if (item1->SetNewDistance(length)) {
             item1->parent = node;
-            if (item2->SetNewDistance(DistanceBetween(*item1, *item2) + length)) {
+            if (item2->SetNewDistance(DistanceBetween(item1->point, item2->point) + length)) {
                 item2->parent = item1;
                 ret.push_back(item2);
             }

@@ -7,8 +7,9 @@
 struct Node;
 typedef std::pair<Node *, Node *> Connection;
 
-struct CircleNode : public Circle {
+struct CircleNode {
     bool generated = false;
+    const Circle circle;
     std::vector<Connection> connections{};
 
     void AddConnection(Connection connection);

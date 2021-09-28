@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-bool DoubleEquals(double x, double y) { return abs(x - y) < ZERO_THRESHOLD; }
+//bool DoubleEquals(double x, double y) { return abs(x - y) < ZERO_THRESHOLD; }
 
 double Limit(double x) {
     if (abs(x) < ZERO_THRESHOLD) return 0;
@@ -8,7 +8,7 @@ double Limit(double x) {
     return x;
 }
 
-bool Infinity(double x) { return isinf(x); }
+//bool Infinity(double x) { return isinf(x); }
 
 double DistanceBetween(Point a, Point b) { return sqrt(pow2(a.x - b.x) + pow2(a.y - b.y)); }
 
@@ -30,9 +30,9 @@ Point RelativePoint(Point start, double ratio, Point end) {
     return {start.x * (1 - ratio) + end.x * ratio, start.y * (1 - ratio) + end.y * ratio};
 }
 
-bool InRangeInclusive(double min, double target, double max) { return min <= target && target <= max; }
+//bool InRangeInclusive(double min, double target, double max) { return min <= target && target <= max; }
 
-bool InRangeExclusive(double min, double target, double max) { return min < target && target < max; }
+//bool InRangeExclusive(double min, double target, double max) { return min < target && target < max; }
 
 double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
 

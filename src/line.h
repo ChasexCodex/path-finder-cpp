@@ -9,7 +9,7 @@ struct Line {
     double slope;
     double offset;
 
-    double PerpendicularSlope();
+//    double PerpendicularSlope();
 
     Line(double slope, double offset);
 
@@ -17,17 +17,17 @@ struct Line {
 
     Line(double slope, Point has);
 
-    Line PerpendicularAt(Point point);
+//    Line PerpendicularAt(Point point);
 
     double DistanceFrom(Point point);
 
-    double GetX(double y);
+//    double GetX(double y);
 
     double GetY(double x);
 
     bool PassesByPoint(Point point);
 
-    Point *IntersectionWithLine(Line line);
+//    Point *IntersectionWithLine(Line line);
 
     static Line *IntersectionLineOfTwoCircles(Circle a, Circle b);
 

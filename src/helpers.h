@@ -14,11 +14,12 @@ const double PI = 3.14159265358979;
 
 #define pow2(x) pow(x, 2)
 
-bool DoubleEquals(double x, double y);
+//bool DoubleEquals(double x, double y);
+#define DoubleEquals(x, y) (abs((x) - (y)) < ZERO_THRESHOLD)
 
 double Limit(double x);
 
-bool Infinity(double x);
+//bool Infinity(double x);
 
 double DistanceBetween(Point a, Point b);
 
@@ -30,9 +31,11 @@ bool SamePoint(Point a, Point b);
 
 Point RelativePoint(Point start, double ratio, Point end);
 
-bool InRangeInclusive(double min, double target, double max);
+//bool InRangeInclusive(double min, double target, double max);
+#define InRangeInclusive(min, target, max) ((min) <= (target) && (target) <= (max))
 
-bool InRangeExclusive(double min, double target, double max);
+//bool InRangeExclusive(double min, double target, double max);
+#define InRangeExclusive(min, target, max) ((min) < (target) && (target) < (max))
 
 double NormalizeAngle(double rad);
 

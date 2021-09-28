@@ -5,13 +5,14 @@
 #include "helpers.h"
 #include "arc.h"
 
-struct Node : public Point {
+struct Node {
     double distance = INFINITY;
     double heuristic = 0;
     bool visited = false;
     CircleNode *container = nullptr;
     Node *parent = nullptr;
     Direction presetDirection = None;
+    Point point;
 
     Node(Point point, CircleNode *container, Point end);
 

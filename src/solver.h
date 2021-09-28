@@ -6,8 +6,8 @@
 using namespace std;
 
 class Solver {
-    Node *begin = nullptr;
-    Node *finish = nullptr;
+    Node *begin;
+    Node *finish;
 
     vector<CircleNode *> obstacles{};
     vector<Node *> beginConnections{};

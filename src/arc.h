@@ -5,19 +5,19 @@
 #include "line.h"
 
 class Arc {
-    Point start;
-    Point end;
-    Circle circle;
-    Direction direction;
+    const Point start;
+    const Point end;
+    const Circle circle;
+    const Direction direction;
 
 public:
     Arc(Point start, Point end, Direction direction, Circle circle);
 
-    double Length();
+    [[nodiscard]] double Length() const;
 
-    bool IntersectsWithCircle(Circle other);
+    [[nodiscard]] bool IntersectsWithCircle(Circle other) const;
 
-    bool ContainsPointUnchecked(Point point);
+    [[nodiscard]] bool ContainsPointUnchecked(Point point) const;
 };
 
 #endif //PATH_FINDER_CPP_ARC_H
