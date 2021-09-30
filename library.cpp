@@ -1,7 +1,10 @@
 #include "src/arc.h"
-
-extern "C" __declspec(dllexport) double ArcLength(Arc* arc);
+#include "library.h"
 
 double ArcLength(Arc *arc) {
     return arc->Length();
+}
+
+int GetCode() {
+    return 2;
 }

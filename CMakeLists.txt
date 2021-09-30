@@ -16,7 +16,7 @@ if(BUILD_LIBRARY)
             src/segment.cpp
             src/solver.cpp
             src/helpers.cpp
-            )
+            library.h)
 else()
     project(path_finder_cpp)
     add_executable(path_finder_cpp main.cpp
