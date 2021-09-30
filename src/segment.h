@@ -4,7 +4,7 @@
 #include "helpers.h"
 #include "line.h"
 
-class Segment : public Line {
+class Segment : Line {
     Point start;
     Point end;
 

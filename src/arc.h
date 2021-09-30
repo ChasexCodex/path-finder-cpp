@@ -10,14 +10,15 @@ class Arc {
     const Circle circle;
     const Direction direction;
 
+private:
+    [[nodiscard]] bool ContainsPointUnchecked(Point point) const;
+
 public:
     Arc(Point start, Point end, Direction direction, Circle circle);
 
     [[nodiscard]] double Length() const;
 
     [[nodiscard]] bool IntersectsWithCircle(Circle other) const;
-
-    [[nodiscard]] bool ContainsPointUnchecked(Point point) const;
 };
 
 #endif //PATH_FINDER_CPP_ARC_H

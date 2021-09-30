@@ -5,17 +5,11 @@
 #include <iterator>
 #include "helpers.h"
 
-struct Line {
+class Line {
     double slope;
     double offset;
 
 //    double PerpendicularSlope();
-
-    Line(double slope, double offset);
-
-    Line(PointRef a, PointRef b);
-
-    Line(double slope, PointRef has);
 
 //    Line PerpendicularAt(Point point);
 
@@ -25,10 +19,18 @@ struct Line {
 
     [[nodiscard]] double GetY(double x) const;
 
-    [[nodiscard]] bool PassesByPoint(PointRef point) const;
-
 //    Point *IntersectionWithLine(Line line);
 
+public:
+    Line(double slope, double offset);
+
+    Line(PointRef a, PointRef b);
+
+    Line(double slope, PointRef has);
+
+    [[nodiscard]] bool PassesByPoint(PointRef point) const;
+
+public:
     [[nodiscard]] Point PointOfTangency(CircleRef circle) const;
 
     [[nodiscard]] vector<Point> IntersectionWithCircle(CircleRef circle) const;

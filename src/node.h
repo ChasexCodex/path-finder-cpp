@@ -18,13 +18,13 @@ struct Node {
 
     bool SetNewDistance(double newDistance);
 
-    Direction GetDirection(Point resolver, bool inverse = false) const;
+    [[nodiscard]] Direction GetDirection(Point resolver, bool inverse = false) const;
 
-    Direction GetDirectionParent() const;;
+    [[nodiscard]] Direction GetDirectionParent() const;;
 
-    Arc MakeArc(Point end) const;
+    [[nodiscard]] Arc MakeArc(Point end) const;
 
-    double EstimatedLength() const;
+    [[nodiscard]] double EstimatedLength() const;
 
     void SetDirection(Direction direction);
 };
