@@ -2,11 +2,13 @@
 
 //bool DoubleEquals(double x, double y) { return abs(x - y) < ZERO_THRESHOLD; }
 
+#if USE_LIMIT
 double Limit(double x) {
     if (abs(x) < ZERO_THRESHOLD) return 0;
     if (abs(x) > INFINITY_THRESHOLD) return INFINITY;
     return x;
 }
+#endif
 
 //bool Infinity(double x) { return isinf(x); }
 

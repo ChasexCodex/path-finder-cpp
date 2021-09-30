@@ -20,8 +20,11 @@ typedef const Circle &CircleRef;
 //bool DoubleEquals(double x, double y);
 #define DoubleEquals(x, y) (abs((x) - (y)) < ZERO_THRESHOLD)
 
+#if USE_LIMIT
 double Limit(double x);
-
+#else
+#define Limit(x) (x)
+#endif
 //bool Infinity(double x);
 
 double DistanceBetween(PointRef a, PointRef b);

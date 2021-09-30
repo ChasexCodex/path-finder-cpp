@@ -48,7 +48,7 @@ int main() {
     }
 
     try {
-        printf("Start");
+        printf("Start\n");
         auto capture = std::chrono::high_resolution_clock::now();
         auto result = solve(start, end, obstacles);
         auto elapsed = std::chrono::high_resolution_clock::now() - capture;
