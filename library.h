@@ -27,12 +27,12 @@ DLLEXPORT bool PointOnCircleEdge(Circle *circle, Point *point);
 #endif
 
 // Line
-DLLEXPORT Point *PointOfTangency(Circle *circle);
+DLLEXPORT Point *PointOfTangency(Line* line, Circle *circle);
 DLLEXPORT Line *IntersectionLineOfTwoCircles(Circle *a, Circle *b);
 DLLEXPORT size_t Tangents(Point *point, Circle *circle, Line **result);
 DLLEXPORT size_t CommonTangents(Circle *a, Circle *b, Line **result);
 
-DLLEXPORT double Solve(Point *start, Point *end, Circle *circles, int count);
+DLLEXPORT double Solve(Point *start, Point *end, Circle **circles, int count);
 
 DLLEXPORT void FreePoint(Point *point);
 DLLEXPORT void FreeCircle(Circle *circle);

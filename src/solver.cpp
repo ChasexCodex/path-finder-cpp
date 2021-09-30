@@ -214,3 +214,11 @@ vector<Node *> Solver::Search(Node *node) {
 
     return ret;
 }
+
+//Solver::~Solver() {
+//    delete begin;
+//    delete finish;
+//    for (auto & obstacle : obstacles)
+//        delete obstacle;
+//    for (auto & node : beginConnections);
+//}

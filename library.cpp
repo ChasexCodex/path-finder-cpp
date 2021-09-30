@@ -19,7 +19,10 @@ double DifferenceOfSquares_Internal(double operand1, double operand2) {
 
 size_t QuadraticEquation(double a, double b, double c, double **result) {
     auto res = QuadraticEquation(a, b, c);
-    *result = res.data();
+    *result = new double[res.size()];
+    for (int i = 0; i < res.size(); ++i) {
+        (*result)[i] = res[i];
+    }
     return res.size();
 }
 
@@ -54,8 +57,8 @@ bool PointOnCircleEdge(Circle *circle, Point *point) {
 
 #endif
 
-double Solve(Point *start, Point *end, Circle *circles, int count) {
-    vector<Circle> obstacles(circles, circles + count);
+double Solve(Point *start, Point *end, Circle **circles, int count) {
+    vector<Circle> obstacles(*circles, *circles + count);
     return Solver(*start, *end, obstacles).Solve();
 }
 

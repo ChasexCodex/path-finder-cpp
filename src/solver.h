@@ -24,6 +24,8 @@ public:
     Solver(Point start, Point end, vector<Circle> obstacles);
 
     double Solve();
+
+//    ~Solver();
 };
 
 #endif //PATH_FINDER_CPP_SOLVER_H
