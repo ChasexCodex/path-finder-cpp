@@ -2,7 +2,9 @@
 #include <chrono>
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
+#include <csignal>
 #include "src/solver.h"
+
 
 using namespace rapidjson;
 
@@ -11,20 +13,23 @@ double solve(Point start, Point end, vector<Circle> obstacle) {
 }
 
 int main() {
-//    Solver solver({-10, 0}, {10, 0}, {
-//            {-6, 0, 2},
-//            {6,  0, 2},
-//            {0,  0, 3},
-//    });
+    signal(SIGABRT, [](int signalCode) {
+        cout << "Terminating..." << endl;
+    });
 
 //    Solver solver({-1, 0}, {0, 1}, {{0, 0, 1}});
 
     FILE *fp;
+
+#if DEFAULT_MSVC
     fopen_s(&fp, "data.json", "rb");
+#elif WSL_GCC
+    fp = fopen("data.json", "rb");
+#endif
 
     if(!fp) {
         cout << "Error reading the file 'data.json'. Terminating" << endl;
-        return -1;
+        return 1;
     }
 
     char readBuffer[200000];

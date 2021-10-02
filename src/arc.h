@@ -8,7 +8,6 @@ class Arc {
     const Point start;
     const Point end;
     const Circle circle;
-    const Direction direction;
 
 private:
     [[nodiscard]] bool ContainsPointUnchecked(Point point) const;

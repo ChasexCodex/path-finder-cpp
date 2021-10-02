@@ -76,7 +76,7 @@ void Solver::GenerateMap() {
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
         if (PointOnCircleEdge(obstacle->circle, begin->point)) {
             for (auto direction: {Clockwise, CounterClockwise}) {
-                auto node = new Node(begin->point, obstacle, finish->point);
+                auto node = CreateNode(begin->point, obstacle, finish->point);
                 node->SetDirection(direction);
                 node->SetNewDistance(0);
                 beginConnections.push_back(node);
@@ -99,7 +99,7 @@ void Solver::GenerateMap() {
 
                 if (skip) continue;
 
-                auto node = new Node(pointOfTangency, obstacles[i], finish->point);
+                auto node = CreateNode(pointOfTangency, obstacles[i], finish->point);
                 node->SetNewDistance(DistanceBetween(begin->point, pointOfTangency));
                 node->parent = begin;
                 beginConnections.push_back(node);
@@ -109,7 +109,7 @@ void Solver::GenerateMap() {
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
         if (PointOnCircleEdge(obstacle->circle, finish->point)) {
             for (auto direction: {Clockwise, CounterClockwise}) {
-                auto node = new Node(finish->point, obstacle, finish->point);
+                auto node = CreateNode(finish->point, obstacle, finish->point);
                 node->SetDirection(direction);
                 obstacle->AddConnection({node, finish});
             }
@@ -131,7 +131,7 @@ void Solver::GenerateMap() {
 
                 if (skip) continue;
 
-                auto node = new Node(pointOfTangency, obstacles[i], finish->point);
+                auto node = CreateNode(pointOfTangency, obstacles[i], finish->point);
                 obstacles[i]->AddConnection({node, finish});
             }
     }
@@ -159,8 +159,8 @@ void Solver::GenerateCircleNodeConnections(CircleNode *circleNode) {
 
             if (skip) continue;
 
-            auto node1 = new Node(pot1, circleNode, finish->point);
-            auto node2 = new Node(pot2, obstacle, finish->point);
+            auto node1 = CreateNode(pot1, circleNode, finish->point);
+            auto node2 = CreateNode(pot2, obstacle, finish->point);
             circleNode->AddConnection({node1, node2});
             obstacle->AddConnection({node2, node1});
         }
@@ -215,10 +215,17 @@ vector<Node *> Solver::Search(Node *node) {
     return ret;
 }
 
-//Solver::~Solver() {
-//    delete begin;
-//    delete finish;
-//    for (auto & obstacle : obstacles)
-//        delete obstacle;
-//    for (auto & node : beginConnections);
-//}
+Solver::~Solver() {
+    delete begin;
+    delete finish;
+    for (auto & obstacle : obstacles)
+        delete obstacle;
+    for (auto & node : nodes)
+        delete node;
+}
+
+Node *Solver::CreateNode(Point point, CircleNode *container, Point end) {
+    auto node = new Node(point, container, end);
+    nodes.push_back(node);
+    return node;
+}

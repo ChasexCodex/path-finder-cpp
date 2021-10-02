@@ -8,7 +8,7 @@ Line::Line(double slope, double offset) : slope(Limit(slope)), offset(offset) {}
 
 Line::Line(PointRef a, PointRef b) {
     if (SamePoint(a, b))
-        throw exception("Same Point");
+        throw exception();
     slope = Limit(((a.y - b.y) / (a.x - b.x)));
     if (isinf(slope))
         offset = a.x;
@@ -168,15 +168,15 @@ vector<Line> Line::CommonTangents(CircleRef a, CircleRef b) {
         ret.insert(ret.end(), result.begin(), result.end());
     }
 
-    if (distance < radii)
+    if (distance < radii || DoubleEquals(distance, radii))
         return ret;
 
-    if (DoubleEquals(distance, radii))
-        ret.emplace_back(-(a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y), RelativePoint(a.ctr, a.r / radii, b.ctr));
-    else {
-        auto result = Tangents(RelativePoint(a.ctr, a.r / radii, b.ctr), smallest);
-        ret.insert(ret.end(), result.begin(), result.end());
-    }
+//    if (DoubleEquals(distance, radii))
+//        ret.emplace_back(-(a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y), RelativePoint(a.ctr, a.r / radii, b.ctr));
+//    else {
+    auto result = Tangents(RelativePoint(a.ctr, a.r / radii, b.ctr), smallest);
+    ret.insert(ret.end(), result.begin(), result.end());
+//    }
 
     return ret;
 }

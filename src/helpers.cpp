@@ -48,7 +48,11 @@ double Angle(PointRef a, PointRef b, PointRef c) {
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {
     if (SamePoint(point, resolver))
-        throw exception("Can't determine the direction");
+#if DEFAULT_MSVC
+        throw exception("None Occurred");
+#elif WSL_GCC
+        throw exception();
+#endif
 
     auto i = inverse ? -1 : 1;
 

@@ -1,12 +1,18 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.18)
 
 set(CMAKE_CXX_STANDARD 17)
-set(BUILD_LIBRARY true)
+set(BUILD_LIBRARY false)
 
 add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
 
-if(BUILD_LIBRARY)
+if (BUILD_LIBRARY)
     project(path_finder_cpp_shared)
+
+    if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "MSVC")
+        add_compile_definitions(DEFAULT_MSVC)
+    elseif ("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+        add_compile_definitions(WSL_GCC)
+    endif ()
 
     add_library(path_finder_cpp_shared SHARED library.cpp
             src/arc.cpp
@@ -17,8 +23,15 @@ if(BUILD_LIBRARY)
             src/solver.cpp
             src/helpers.cpp
             library.h)
-else()
+else ()
     project(path_finder_cpp)
+
+    if (CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+        add_compile_definitions(DEFAULT_MSVC)
+    elseif (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        add_compile_definitions(WSL_GCC)
+    endif ()
+
     add_executable(path_finder_cpp main.cpp
             src/arc.cpp
             src/circle_node.cpp
@@ -31,6 +44,6 @@ else()
 
     find_package(RapidJSON CONFIG REQUIRED)
     target_link_libraries(path_finder_cpp PRIVATE rapidjson)
-endif()
+endif ()
 
 configure_file(data.json data.json COPYONLY)
