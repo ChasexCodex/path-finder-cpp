@@ -52,14 +52,21 @@ int main() {
         obstacles.emplace_back(x, y, r);
     }
 
+    Solver solver(start, end, obstacles);
+
     try {
         printf("Start\n");
         auto capture = std::chrono::high_resolution_clock::now();
-        auto result = solve(start, end, obstacles);
+        auto result = solver.Solve();
         auto elapsed = std::chrono::high_resolution_clock::now() - capture;
         int64_t microseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
         printf("Took %lld ms\n", microseconds);
-        printf("%.15f", result);
+        printf("%.15f\n\n", result);
+        auto res = solver.GetFinishPath();
+        printf("%d\n", res.size());
+        for (const auto &point : res) {
+            printf("(x: %.15f, y: %.15f)\n", point.x, point.y);
+        }
     } catch (...) {
         cout << "An error occurred" << endl;
     }

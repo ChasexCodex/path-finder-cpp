@@ -8,37 +8,68 @@
 Solver::Solver(Point start, Point end, vector<Circle> _obstacles) {
     begin = new Node(start, nullptr, end);
     finish = new Node(end, nullptr, end);
-    transform(_obstacles.begin(), _obstacles.end(), back_inserter(obstacles), [](const Circle& circle) {
+    transform(_obstacles.begin(), _obstacles.end(), back_inserter(obstacles), [](const Circle &circle) {
         return new CircleNode(circle);
     });
 }
+
+
+//double Solver::Solve() {
+//    const auto result = StartSolving();
+//    if (result.second)
+//        return result.first;
+//
+//    auto comparer = [](const Node *const lhs, const Node *const rhs) {
+//        return lhs->EstimatedLength() > rhs->EstimatedLength();
+//    };
+//    priority_queue<Node *, vector<Node *>, decltype(comparer)> paths(comparer);
+//    for (const auto& path: beginConnections) {
+//        paths.push(path);
+//    }
+//    bool found;
+//    while (!paths.empty()) {
+//
+//        auto newNodes = Search(paths.top());
+//        paths.pop();
+//        found = !isinf(finish->distance);
+//        for (const auto newNode: newNodes) {
+//            if (found) {
+//                if (newNode->EstimatedLength() >= finish->distance)
+//                    continue;
+//            }
+//            paths.push(newNode);
+//        }
+//    }
+//
+//    return found ? finish->distance : -1;
+//}
 
 double Solver::Solve() {
     const auto result = StartSolving();
     if (result.second)
         return result.first;
 
-    auto comparer = [](Node *const lhs, Node *const rhs) {
-        return lhs->EstimatedLength() > rhs->EstimatedLength();
+    auto comparer = [](const Node *const lhs, const Node *const rhs) {
+        return lhs->EstimatedLength() < rhs->EstimatedLength();
     };
-    priority_queue<Node *, vector<Node *>, decltype(comparer)> paths(comparer);
-    for (const auto& path: beginConnections) {
-        paths.push(path);
-    }
+    vector<Node *> paths(beginConnections.begin(), beginConnections.end());
+    bool found;
     while (!paths.empty()) {
-        auto newNodes = Search(paths.top());
-        paths.pop();
-        bool found = !isinf(finish->distance);
-        for (const auto newNode: newNodes) {
-            if (found) {
-                if (newNode->EstimatedLength() >= finish->distance)
-                    continue;
-            }
-            paths.push(newNode);
+        sort(paths.begin(), paths.end(), comparer);
+        auto newNodes = Search(paths[0]);
+        paths.erase(paths.begin());
+        found = !isinf(finish->distance);
+        for (auto &item: newNodes) {
+            paths.push_back(item);
         }
+        if (!found) continue;
+        auto pend = remove_if(paths.begin(), paths.end(), [this](const Node *const node) {
+            return node->EstimatedLength() >= finish->distance;
+        });
+        paths.erase(pend, paths.end());
     }
 
-    return isinf(finish->distance) ? -1 : finish->distance;
+    return found ? finish->distance : -1;
 }
 
 pair<double, bool> Solver::StartSolving() {
@@ -84,26 +115,26 @@ void Solver::GenerateMap() {
         } else
 #endif
 
-            for (auto tangent: Line::Tangents(begin->point, obstacle->circle)) {
-                auto pointOfTangency = tangent.PointOfTangency(obstacle->circle);
-                Segment segment(begin->point, pointOfTangency);
+        for (auto tangent: Line::Tangents(begin->point, obstacle->circle)) {
+            auto pointOfTangency = tangent.PointOfTangency(obstacle->circle);
+            Segment segment(begin->point, pointOfTangency);
 
-                bool skip = false;
-                for (int j = 0; j < size; j++) {
-                    if (i == j) continue;
-                    if (segment.IntersectsWithCircle(obstacles[j]->circle)) {
-                        skip = true;
-                        break;
-                    }
+            bool skip = false;
+            for (int j = 0; j < size; j++) {
+                if (i == j) continue;
+                if (segment.IntersectsWithCircle(obstacles[j]->circle)) {
+                    skip = true;
+                    break;
                 }
-
-                if (skip) continue;
-
-                auto node = CreateNode(pointOfTangency, obstacles[i], finish->point);
-                node->SetNewDistance(DistanceBetween(begin->point, pointOfTangency));
-                node->parent = begin;
-                beginConnections.push_back(node);
             }
+
+            if (skip) continue;
+
+            auto node = CreateNode(pointOfTangency, obstacles[i], finish->point);
+            node->SetNewDistance(DistanceBetween(begin->point, pointOfTangency));
+            node->parent = begin;
+            beginConnections.push_back(node);
+        }
 
         // finish connections
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
@@ -116,24 +147,24 @@ void Solver::GenerateMap() {
         } else
 #endif
 
-            for (auto tangent: Line::Tangents(finish->point, obstacle->circle)) {
-                auto pointOfTangency = tangent.PointOfTangency(obstacle->circle);
-                Segment segment(pointOfTangency, finish->point);
+        for (auto tangent: Line::Tangents(finish->point, obstacle->circle)) {
+            auto pointOfTangency = tangent.PointOfTangency(obstacle->circle);
+            Segment segment(pointOfTangency, finish->point);
 
-                bool skip = false;
-                for (int j = 0; j < size; j++) {
-                    if (i == j) continue;
-                    if (segment.IntersectsWithCircle(obstacles[j]->circle)) {
-                        skip = true;
-                        break;
-                    }
+            bool skip = false;
+            for (int j = 0; j < size; j++) {
+                if (i == j) continue;
+                if (segment.IntersectsWithCircle(obstacles[j]->circle)) {
+                    skip = true;
+                    break;
                 }
-
-                if (skip) continue;
-
-                auto node = CreateNode(pointOfTangency, obstacles[i], finish->point);
-                obstacles[i]->AddConnection({node, finish});
             }
+
+            if (skip) continue;
+
+            auto node = CreateNode(pointOfTangency, obstacles[i], finish->point);
+            obstacles[i]->AddConnection({node, finish});
+        }
     }
 }
 
@@ -148,7 +179,7 @@ void Solver::GenerateCircleNodeConnections(CircleNode *circleNode) {
             Segment segment(pot1, pot2);
 
             bool skip = false;
-            for (auto other: obstacles) {
+            for (const auto other: obstacles) {
                 if (other == circleNode || other == obstacle)
                     continue;
                 if (segment.IntersectsWithCircle(other->circle)) {
@@ -182,8 +213,8 @@ vector<Node *> Solver::Search(Node *node) {
     });
 
     for (auto tuple: connections) {
-        auto item1 = tuple.first;
-        auto item2 = tuple.second;
+        const auto &item1 = tuple.first;
+        const auto &item2 = tuple.second;
 
         if (node->GetDirectionParent() != item1->GetDirection(item2->point, true))
             continue;
@@ -218,9 +249,9 @@ vector<Node *> Solver::Search(Node *node) {
 Solver::~Solver() {
     delete begin;
     delete finish;
-    for (auto & obstacle : obstacles)
+    for (auto &obstacle: obstacles)
         delete obstacle;
-    for (auto & node : nodes)
+    for (auto &node: nodes)
         delete node;
 }
 
@@ -228,4 +259,14 @@ Node *Solver::CreateNode(Point point, CircleNode *container, Point end) {
     auto node = new Node(point, container, end);
     nodes.push_back(node);
     return node;
+}
+
+vector<Point> Solver::GetFinishPath() {
+    auto ref = finish;
+    vector<Point> ret;
+    while (ref) {
+        ret.push_back(ref->point);
+        ref = ref->parent;
+    }
+    return ret;
 }

@@ -29,6 +29,8 @@ public:
 
     double Solve();
 
+    vector<Point> GetFinishPath();
+
     ~Solver();
 };
 
