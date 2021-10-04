@@ -1,20 +1,56 @@
 #include "helpers.h"
 
-bool DoubleEquals(double x, double y) { return abs(x - y) < ZERO_THRESHOLD; }
+#if !USE_MACROS
+
+double pow2(double x) { return x * x; }
+
+bool DoubleEquals(double x, double y) {
+    return abs(x - y) < ZERO_THRESHOLD;
+}
+
+double DifferenceOfSquares(double operand1, double operand2) {
+    return (operand1 + operand2) * (operand1 - operand2);
+}
+
+bool InRangeInclusive(double min, double target, double max) {
+    return min <= target && target <= max;
+}
+
+bool InRangeExclusive(double min, double target, double max) {
+    return min < target && target < max;
+}
+
+double NormalizeAngle(double rad) {
+    return rad >= 0 ? rad : 2 * PI + rad;
+}
+
+double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
+    return NormalizeAngle(Angle(a, b, c));
+}
+
+#endif
 
 #if USE_LIMIT
+
 double Limit(double x) {
     if (abs(x) < ZERO_THRESHOLD) return 0;
     if (abs(x) > INFINITY_THRESHOLD) return INFINITY;
     return x;
 }
+
 #endif
 
-//bool Infinity(double x) { return isinf(x); }
+double DistanceBetween(PointRef a, PointRef b) {
+    return sqrt(pow2(a.x - b.x) + pow2(a.y - b.y));
+}
 
-double DistanceBetween(PointRef a, PointRef b) { return sqrt(pow2(a.x - b.x) + pow2(a.y - b.y)); }
+bool SamePoint(PointRef a, PointRef b) {
+    return DoubleEquals(a.x, b.x) && DoubleEquals(a.y, b.y);
+}
 
-double DifferenceOfSquares(double operand1, double operand2) { return (operand1 + operand2) * (operand1 - operand2); }
+double Angle(PointRef a, PointRef b, PointRef c) {
+    return atan2(a.y - b.y, a.x - b.x) - atan2(c.y - b.y, c.x - b.x);
+}
 
 vector<double> QuadraticEquation(double a, double b, double c) {
     auto delta = pow2(b) - 4 * a * c;
@@ -26,24 +62,8 @@ vector<double> QuadraticEquation(double a, double b, double c) {
     return {(-b + delta) / (2 * a), (-b - delta) / (2 * a)};
 }
 
-bool SamePoint(PointRef a, PointRef b) { return DoubleEquals(a.x, b.x) && DoubleEquals(a.y, b.y); }
-
 Point RelativePoint(PointRef start, double ratio, PointRef end) {
     return {start.x * (1 - ratio) + end.x * ratio, start.y * (1 - ratio) + end.y * ratio};
-}
-
-bool InRangeInclusive(double min, double target, double max) { return min <= target && target <= max; }
-
-bool InRangeExclusive(double min, double target, double max) { return min < target && target < max; }
-
-double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
-
-double Angle(PointRef a, PointRef b, PointRef c) {
-    return atan2(a.y - b.y, a.x - b.x) - atan2(c.y - b.y, c.x - b.x);
-}
-
-double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
-    return NormalizeAngle(Angle(a, b, c));
 }
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {

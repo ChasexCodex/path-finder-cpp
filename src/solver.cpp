@@ -237,15 +237,15 @@ Node *Solver::CreateNode(Point point, CircleNode *container, Point end) {
     return node;
 }
 
-vector<Point> Solver::GetFinishPath() {
-    auto ref = finish;
-    vector<Point> ret;
-    while (ref) {
-        ret.push_back(ref->point);
-        ref = ref->parent;
-    }
-    return ret;
-}
+//vector<Point> Solver::GetFinishPath() {
+//    auto ref = finish;
+//    vector<Point> ret;
+//    while (ref) {
+//        ret.push_back(ref->point);
+//        ref = ref->parent;
+//    }
+//    return ret;
+//}
 
 Solver::~Solver() {
     delete begin;

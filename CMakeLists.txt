@@ -3,7 +3,11 @@ cmake_minimum_required(VERSION 3.18)
 set(CMAKE_CXX_STANDARD 17)
 set(BUILD_LIBRARY false)
 
-#add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
+# SETTINGS TO MODIFY THE REQUIREMENTS OF THE PATH FINDER
+add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
+add_compile_definitions(USE_MACROS)
+add_compile_definitions(USE_LIMIT)
+
 if(true)
     add_compile_definitions(ASTAR)
 else()
@@ -27,7 +31,7 @@ if (BUILD_LIBRARY)
             src/segment.cpp
             src/solver.cpp
             src/helpers.cpp
-            library.h)
+            library.h src/definitions.h)
 else ()
     project(path_finder_cpp)
 
@@ -45,7 +49,7 @@ else ()
             src/segment.cpp
             src/solver.cpp
             src/helpers.cpp
-            )
+            function.cpp)
 
     find_package(RapidJSON CONFIG REQUIRED)
     target_link_libraries(path_finder_cpp PRIVATE rapidjson)

@@ -29,7 +29,7 @@ public:
 
     double Solve();
 
-    vector<Point> GetFinishPath();
+//    vector<Point> GetFinishPath();
 
     ~Solver();
 };

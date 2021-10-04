@@ -62,11 +62,11 @@ int main() {
         int64_t microseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
         printf("Took %lld ms\n", microseconds);
         printf("%.15f\n\n", result);
-        auto res = solver.GetFinishPath();
-        printf("%d\n", res.size());
-        for (const auto &point : res) {
-            printf("(x: %.15f, y: %.15f)\n", point.x, point.y);
-        }
+//        auto res = solver.GetFinishPath();
+//        printf("%d\n", res.size());
+//        for (const auto &point : res) {
+//            printf("(x: %.15f, y: %.15f)\n", point.x, point.y);
+//        }
     } catch (...) {
         cout << "An error occurred" << endl;
     }

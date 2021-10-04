@@ -10,11 +10,11 @@ double Arc::Length() const {
 }
 
 bool Arc::IntersectsWithCircle(Circle other) const {
-    const auto intersectionLine = Line::IntersectionLineOfTwoCircles(circle, other);
+    auto intersectionLine = Line::IntersectionLineOfTwoCircles(circle, other);
     if (intersectionLine == nullptr)
         return false;
 
-    const auto &result = intersectionLine->IntersectionWithCircle(circle);
+    auto result = intersectionLine->IntersectionWithCircle(circle);
     delete intersectionLine;
 
     return any_of(result.begin(), result.end(), [this](const Point &point) {
