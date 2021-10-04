@@ -24,8 +24,9 @@ struct Node {
 
     [[nodiscard]] Arc MakeArc(Point end) const;
 
+#if ASTAR
     [[nodiscard]] double EstimatedLength() const;
-
+#endif
     void SetDirection(Direction direction);
 };
 

@@ -3,7 +3,12 @@ cmake_minimum_required(VERSION 3.18)
 set(CMAKE_CXX_STANDARD 17)
 set(BUILD_LIBRARY false)
 
-add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
+#add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
+if(true)
+    add_compile_definitions(ASTAR)
+else()
+    add_compile_definitions(DIJKSTRA)
+endif()
 
 if (BUILD_LIBRARY)
     project(path_finder_cpp_shared)

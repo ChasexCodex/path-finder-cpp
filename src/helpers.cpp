@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-//bool DoubleEquals(double x, double y) { return abs(x - y) < ZERO_THRESHOLD; }
+bool DoubleEquals(double x, double y) { return abs(x - y) < ZERO_THRESHOLD; }
 
 #if USE_LIMIT
 double Limit(double x) {
@@ -32,26 +32,26 @@ Point RelativePoint(PointRef start, double ratio, PointRef end) {
     return {start.x * (1 - ratio) + end.x * ratio, start.y * (1 - ratio) + end.y * ratio};
 }
 
-//bool InRangeInclusive(double min, double target, double max) { return min <= target && target <= max; }
+bool InRangeInclusive(double min, double target, double max) { return min <= target && target <= max; }
 
-//bool InRangeExclusive(double min, double target, double max) { return min < target && target < max; }
+bool InRangeExclusive(double min, double target, double max) { return min < target && target < max; }
 
-//double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
+double NormalizeAngle(double rad) { return rad >= 0 ? rad : 2 * PI + rad; }
 
 double Angle(PointRef a, PointRef b, PointRef c) {
     return atan2(a.y - b.y, a.x - b.x) - atan2(c.y - b.y, c.x - b.x);
 }
 
-//double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
-//    return NormalizeAngle(Angle(a, b, c));
-//}
+double NormalizedAngle(PointRef a, PointRef b, PointRef c) {
+    return NormalizeAngle(Angle(a, b, c));
+}
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {
     if (SamePoint(point, resolver))
 #if DEFAULT_MSVC
         throw exception("None Occurred");
 #elif WSL_GCC
-        throw exception();
+    throw exception();
 #endif
 
     auto i = inverse ? -1 : 1;

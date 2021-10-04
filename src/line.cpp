@@ -28,6 +28,8 @@ Line::Line(double slope, PointRef has) : slope(Limit(slope)) {
 //}
 
 double Line::DistanceFrom(PointRef point) const {
+    if(isinf(slope))
+        return abs(point.x - offset);
     return abs(slope * point.x - point.y + offset) / sqrt(pow2(slope) + 1);
 }
 
@@ -39,7 +41,7 @@ double Line::DistanceFrom(PointRef point) const {
 
 double Line::GetY(double x) const {
     if (isinf(slope))
-        return NAN;
+        throw exception();
     return x * slope + offset;
 }
 
@@ -69,29 +71,35 @@ Point Line::PointOfTangency(CircleRef circle) const {
 
 vector<Point> Line::IntersectionWithCircle(CircleRef circle) const {
     double distance = DistanceFrom(circle.ctr);
+    if(isnan(distance))
+        throw exception();
     if (distance > circle.r)
         return {};
     if (DoubleEquals(distance, circle.r))
         return {PointOfTangency(circle)};
 
-    vector<double> xs;
+    vector<double> axis;
+    vector<Point> ret;
 
     if (isinf(slope)) {
-        xs = QuadraticEquation(
+        axis = QuadraticEquation(
                 1,
                 -2 * circle.ctr.y,
                 pow2(circle.ctr.y) + DifferenceOfSquares(offset - circle.ctr.x, circle.r));
+        transform(axis.begin(), axis.end(), back_inserter(ret), [this](double y) {
+            return Point(offset, y);
+        });
     } else {
-        xs = QuadraticEquation(
+        axis = QuadraticEquation(
                 1 + pow2(slope),
                 2 * (-circle.ctr.x + slope * (offset - circle.ctr.y)),
                 pow2(circle.ctr.x) + DifferenceOfSquares(offset - circle.ctr.y, circle.r));
+        transform(axis.begin(), axis.end(), back_inserter(ret), [this](double x) {
+            return Point(x, GetY(x));
+        });
     }
 
-    vector<Point> ret;
-    transform(xs.begin(), xs.end(), back_inserter(ret), [this](double x) {
-        return Point(x, GetY(x));
-    });
+
     return ret;
 }
 

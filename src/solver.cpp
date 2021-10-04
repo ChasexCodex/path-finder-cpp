@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <algorithm>
-#include <queue>
 
 Solver::Solver(Point start, Point end, vector<Circle> _obstacles) {
     begin = new Node(start, nullptr, end);
@@ -13,47 +12,21 @@ Solver::Solver(Point start, Point end, vector<Circle> _obstacles) {
     });
 }
 
-
-//double Solver::Solve() {
-//    const auto result = StartSolving();
-//    if (result.second)
-//        return result.first;
-//
-//    auto comparer = [](const Node *const lhs, const Node *const rhs) {
-//        return lhs->EstimatedLength() > rhs->EstimatedLength();
-//    };
-//    priority_queue<Node *, vector<Node *>, decltype(comparer)> paths(comparer);
-//    for (const auto& path: beginConnections) {
-//        paths.push(path);
-//    }
-//    bool found;
-//    while (!paths.empty()) {
-//
-//        auto newNodes = Search(paths.top());
-//        paths.pop();
-//        found = !isinf(finish->distance);
-//        for (const auto newNode: newNodes) {
-//            if (found) {
-//                if (newNode->EstimatedLength() >= finish->distance)
-//                    continue;
-//            }
-//            paths.push(newNode);
-//        }
-//    }
-//
-//    return found ? finish->distance : -1;
-//}
-
 double Solver::Solve() {
     const auto result = StartSolving();
     if (result.second)
         return result.first;
 
     auto comparer = [](const Node *const lhs, const Node *const rhs) {
+#if ASTAR
         return lhs->EstimatedLength() < rhs->EstimatedLength();
+#elif DIJKSTRA
+        return lhs->distance < rhs->distance;
+#endif
     };
-    vector<Node *> paths(beginConnections.begin(), beginConnections.end());
     bool found;
+#if ASTAR
+    vector<Node *> paths(beginConnections.begin(), beginConnections.end());
     while (!paths.empty()) {
         sort(paths.begin(), paths.end(), comparer);
         auto newNodes = Search(paths[0]);
@@ -68,6 +41,18 @@ double Solver::Solve() {
         });
         paths.erase(pend, paths.end());
     }
+#elif DIJKSTRA
+    while(true) {
+        sort(nodes.begin(),  nodes.end(), comparer);
+        auto first = find_if(nodes.begin(),  nodes.end(), [this](Node * node){
+            return !node->visited && node->distance < finish->distance;
+        });
+        if(first == nodes.end())
+            break;
+        Search(*first);
+        found = !isinf(finish->distance);
+    }
+#endif
 
     return found ? finish->distance : -1;
 }
@@ -209,19 +194,19 @@ vector<Node *> Solver::Search(Node *node) {
     auto connections = node->container->connections;
     vector<Connection> connectionsFiltered;
     copy_if(connections.begin(), connections.end(), back_inserter(connectionsFiltered), [](Connection conn) {
-        return !conn.first->visited && !conn.second->visited;
+        return !(conn.first->visited || conn.second->visited);
     });
-
-    for (auto tuple: connections) {
-        const auto &item1 = tuple.first;
-        const auto &item2 = tuple.second;
+    Point target{2.0853057149744103, -7.4292004868520394};
+    for (auto tuple: connectionsFiltered) {
+        auto item1 = tuple.first;
+        auto item2 = tuple.second;
 
         if (node->GetDirectionParent() != item1->GetDirection(item2->point, true))
             continue;
 
         Arc arc = node->MakeArc(item1->point);
         bool skip = false;
-        for (auto obstacle: obstacles) {
+        for (const auto obstacle: obstacles) {
             if (obstacle == node->container)
                 continue;
             if (arc.IntersectsWithCircle(obstacle->circle)) {
@@ -246,15 +231,6 @@ vector<Node *> Solver::Search(Node *node) {
     return ret;
 }
 
-Solver::~Solver() {
-    delete begin;
-    delete finish;
-    for (auto &obstacle: obstacles)
-        delete obstacle;
-    for (auto &node: nodes)
-        delete node;
-}
-
 Node *Solver::CreateNode(Point point, CircleNode *container, Point end) {
     auto node = new Node(point, container, end);
     nodes.push_back(node);
@@ -269,4 +245,13 @@ vector<Point> Solver::GetFinishPath() {
         ref = ref->parent;
     }
     return ret;
+}
+
+Solver::~Solver() {
+    delete begin;
+    delete finish;
+    for (auto obstacle: obstacles)
+        delete obstacle;
+    for (auto node: nodes)
+        delete node;
 }

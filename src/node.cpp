@@ -26,7 +26,9 @@ Arc Node::MakeArc(Point end) const {
     return Arc{point, end, GetDirectionParent(), container->circle};
 }
 
+#if ASTAR
 double Node::EstimatedLength() const { return distance + heuristic; }
+#endif
 
 void Node::SetDirection(Direction direction) {
     presetDirection = direction;

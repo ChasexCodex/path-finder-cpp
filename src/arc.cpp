@@ -15,13 +15,11 @@ bool Arc::IntersectsWithCircle(Circle other) const {
         return false;
 
     const auto &result = intersectionLine->IntersectionWithCircle(circle);
+    delete intersectionLine;
 
-    auto ret = !result.empty() && any_of(result.begin(), result.end(), [this](const Point &point) {
+    return any_of(result.begin(), result.end(), [this](const Point &point) {
         return ContainsPointUnchecked(point);
     });
-
-    delete intersectionLine;
-    return ret;
 }
 
 bool Arc::ContainsPointUnchecked(Point point) const {
