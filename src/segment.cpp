@@ -14,15 +14,8 @@ bool Segment::IntersectsWithCircle(Circle circle) {
     if (CircleContainsPoint(circle, end))
         return true;
     const auto& result = IntersectionWithCircle(circle);
-    if (result.empty())
-        return false;
-    for(const auto& point : result) {
-        if(ContainsPoint(point))
-            return true;
-    }
-    return false;
 
-//    return any_of(result.begin(), result.end(), [this](Point point) {
-//        return ContainsPoint(point);
-//    });
+    return !result.empty() && any_of(result.begin(), result.end(), [this](Point point) {
+        return ContainsPoint(point);
+    });
 }

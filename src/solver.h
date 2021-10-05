@@ -9,7 +9,6 @@ class Solver {
     Node *begin;
     Node *finish;
 
-
     vector<CircleNode *> obstacles{};
     vector<Node *> nodes{};
     vector<Node *> beginConnections{};

@@ -31,7 +31,7 @@ if (BUILD_LIBRARY)
             src/segment.cpp
             src/solver.cpp
             src/helpers.cpp
-            library.h src/definitions.h)
+            library.h)
 else ()
     project(path_finder_cpp)
 
@@ -41,15 +41,16 @@ else ()
         add_compile_definitions(WSL_GCC)
     endif ()
 
+#    add_executable(path_finder_cpp main.cpp
+#            src/arc.cpp
+#            src/circle_node.cpp
+#            src/line.cpp
+#            src/node.cpp
+#            src/segment.cpp
+#            src/solver.cpp
+#            src/helpers.cpp)
     add_executable(path_finder_cpp main.cpp
-            src/arc.cpp
-            src/circle_node.cpp
-            src/line.cpp
-            src/node.cpp
-            src/segment.cpp
-            src/solver.cpp
-            src/helpers.cpp
-            function.cpp)
+            function.cpp function.h)
 
     find_package(RapidJSON CONFIG REQUIRED)
     target_link_libraries(path_finder_cpp PRIVATE rapidjson)

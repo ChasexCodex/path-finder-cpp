@@ -3,14 +3,11 @@
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
 #include <csignal>
-#include "src/solver.h"
-
+#include "function.h"
+#include "src/circle.h"
 
 using namespace rapidjson;
-
-double solve(Point start, Point end, vector<Circle> obstacle) {
-    return Solver(start, end, move(obstacle)).Solve();
-}
+using namespace std;
 
 int main() {
     signal(SIGABRT, [](int signalCode) {
@@ -52,12 +49,10 @@ int main() {
         obstacles.emplace_back(x, y, r);
     }
 
-    Solver solver(start, end, obstacles);
-
     try {
         printf("Start\n");
         auto capture = std::chrono::high_resolution_clock::now();
-        auto result = solver.Solve();
+        auto result = solve(start, end, obstacles);
         auto elapsed = std::chrono::high_resolution_clock::now() - capture;
         int64_t microseconds = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count();
         printf("Took %lld ms\n", microseconds);
