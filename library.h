@@ -7,36 +7,36 @@
 
 extern "C" {
 
-DLLEXPORT double ArcLength(Arc *arc);
-DLLEXPORT bool ArcIntersectsWithCircle(Arc *arc, Circle *circle);
+DLLEXPORT double ArcLength_External(Arc arc);
+DLLEXPORT bool ArcIntersectsWithCircle_External(Arc arc, Circle circle);
 
 // Helpers
-DLLEXPORT double DistanceBetween(Point *a, Point *b);
-DLLEXPORT double DifferenceOfSquares_Internal(double operand1, double operand2);
-DLLEXPORT size_t QuadraticEquation(double a, double b, double c, double **result);
-DLLEXPORT bool SamePoint(Point *a, Point *b);
-DLLEXPORT Point *RelativePoint(Point *start, double ratio, Point *end);
-DLLEXPORT double Angle(Point *a, Point *b, Point *c);
-DLLEXPORT Direction GetDirection(Point *point, Point *resolver, Point *center, bool inverse);
-DLLEXPORT bool CircleContainsPoint(Circle *circle, Point *point);
+DLLEXPORT double DistanceBetween_External(Point a, Point b);
+DLLEXPORT double DifferenceOfSquares_External(double operand1, double operand2);
+DLLEXPORT size_t QuadraticEquation_External(double a, double b, double c, double **result);
+DLLEXPORT bool SamePoint_External(Point a, Point b);
+DLLEXPORT Point* RelativePoint_External(Point start, double ratio, Point end);
+DLLEXPORT double Angle_External(Point a, Point b, Point c);
+DLLEXPORT Direction GetDirection_External(Point point, Point resolver, Point center, bool inverse);
+DLLEXPORT bool CircleContainsPoint_External(Circle circle, Point point);
 
 #if INCLUDE_POINT_ON_CIRCLE_EDGE
 
-DLLEXPORT bool PointOnCircleEdge(Circle *circle, Point *point);
+DLLEXPORT bool PointOnCircleEdge_External(Circle circle, Point point);
 
 #endif
 
 // Line
-DLLEXPORT Point *PointOfTangency(Line* line, Circle *circle);
-DLLEXPORT Line *IntersectionLineOfTwoCircles(Circle *a, Circle *b);
-DLLEXPORT size_t Tangents(Point *point, Circle *circle, Line **result);
-DLLEXPORT size_t CommonTangents(Circle *a, Circle *b, Line **result);
+DLLEXPORT Point *PointOfTangency_External(Line line, Circle circle);
+DLLEXPORT Line *IntersectionLineOfTwoCircles_External(Circle a, Circle b);
+DLLEXPORT size_t Tangents_External(Point point, Circle circle, Line **result);
+DLLEXPORT size_t CommonTangents_External(Circle a, Circle b, Line **result);
 
-DLLEXPORT double Solve(Point *start, Point *end, Circle **circles, int count);
+DLLEXPORT double solve_External(Point start, Point end, double* xs, double* ys, double* rs, int count);
 
-DLLEXPORT void FreePoint(Point *point);
-DLLEXPORT void FreeCircle(Circle *circle);
-DLLEXPORT void FreeLine(Line *line);
+DLLEXPORT void FreePoint_External(Point *point);
+DLLEXPORT void FreeCircle_External(Circle *circle);
+DLLEXPORT void FreeLine_External(Line *line);
 
 }
 

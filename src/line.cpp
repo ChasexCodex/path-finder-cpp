@@ -1,4 +1,5 @@
 #include "line.h"
+#include "definitions.h"
 
 //double Line::PerpendicularSlope() {
 //    return -1 / slope;
@@ -8,7 +9,7 @@ Line::Line(double slope, double offset) : slope(Limit(slope)), offset(offset) {}
 
 Line::Line(PointRef a, PointRef b) {
     if (SamePoint(a, b))
-        throw exception();
+        SAFE_THROW("Was the same point");
     slope = Limit(((a.y - b.y) / (a.x - b.x)));
     if (isinf(slope))
         offset = a.x;
@@ -41,7 +42,7 @@ double Line::DistanceFrom(PointRef point) const {
 
 double Line::GetY(double x) const {
     if (isinf(slope))
-        throw exception();
+        SAFE_THROW("Slope is inf");
     return x * slope + offset;
 }
 
@@ -71,8 +72,6 @@ Point Line::PointOfTangency(CircleRef circle) const {
 
 vector<Point> Line::IntersectionWithCircle(CircleRef circle) const {
     double distance = DistanceFrom(circle.ctr);
-    if(isnan(distance))
-        throw exception();
     if (distance > circle.r)
         return {};
     if (DoubleEquals(distance, circle.r))
@@ -118,7 +117,7 @@ Line *Line::IntersectionLineOfTwoCircles(CircleRef a, CircleRef b) {
 
     if (DoubleEquals(a.ctr.y, b.ctr.y))
         return new Line(INFINITY, ((b.ctr.x + a.ctr.x) + DifferenceOfSquares(a.r, b.r) / (b.ctr.x - a.ctr.x)) / 2);
-    return new Line((a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
+    return new Line(-(a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
                     (DifferenceOfSquares(b.ctr.x, a.ctr.x) + DifferenceOfSquares(b.ctr.y, a.ctr.y) +
                      DifferenceOfSquares(a.r, b.r))
                     / (2 * (b.ctr.y - a.ctr.y)));

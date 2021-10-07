@@ -1,5 +1,8 @@
 // SETTINGS
 #define USE_BASIC_STRUCTURES 1
+#define USE_MACROS 1
+#define USE_LIMIT 1
+#define INCLUDE_POINT_ON_CIRCLE_EDGE 1
 
 
 #if DEFAULT_MSVC
@@ -35,10 +38,6 @@ const double ZERO_THRESHOLD = 1.0E-10;
 const double INFINITY_THRESHOLD = 1.0E+10;
 const double PI = 3.14159265358979;
 
-typedef const Point &PointRef;
-typedef const Circle &CircleRef;
-typedef std::pair<Node *, Node *> Connection;
-
 #if USE_BASIC_STRUCTURES
 
 struct Point {
@@ -61,6 +60,10 @@ struct Circle {
 };
 
 #endif
+
+typedef const Point &PointRef;
+typedef const Circle &CircleRef;
+typedef std::pair<Node *, Node *> Connection;
 
 #if USE_MACROS
 
@@ -180,11 +183,7 @@ Point RelativePoint(PointRef start, double ratio, PointRef end) {
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {
     if (SamePoint(point, resolver))
-#if DEFAULT_MSVC
-        throw exception("None Occurred");
-#elif WSL_GCC
-    throw exception();
-#endif
+        SAFE_THROW("None Occurred");
 
     auto i = inverse ? -1 : 1;
 
@@ -381,7 +380,7 @@ Line::Line(double slope, double offset) : slope(Limit(slope)), offset(offset) {}
 
 Line::Line(PointRef a, PointRef b) {
     if (SamePoint(a, b))
-        throw exception();
+        SAFE_THROW("Was the same point");
     slope = Limit(((a.y - b.y) / (a.x - b.x)));
     if (isinf(slope))
         offset = a.x;
@@ -423,8 +422,6 @@ Point Line::PointOfTangency(CircleRef circle) const {
 
 vector<Point> Line::IntersectionWithCircle(CircleRef circle) const {
     double distance = DistanceFrom(circle.ctr);
-    if (isnan(distance))
-        throw exception();
     if (distance > circle.r)
         return {};
     if (DoubleEquals(distance, circle.r))
@@ -450,7 +447,6 @@ vector<Point> Line::IntersectionWithCircle(CircleRef circle) const {
             return Point(x, GetY(x));
         });
     }
-
 
     return ret;
 }
@@ -840,5 +836,9 @@ Solver::~Solver() {
 }
 
 double solve(Point start, Point end, vector<Circle> obstacle) {
-    return Solver(start, end, move(obstacle)).Solve();
+    try {
+        return Solver(start, end, move(obstacle)).Solve();
+    } catch(...) {
+        return -2;
+    }
 }

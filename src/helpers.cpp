@@ -1,4 +1,5 @@
 #include "helpers.h"
+#include "definitions.h"
 
 #if !USE_MACROS
 
@@ -68,12 +69,7 @@ Point RelativePoint(PointRef start, double ratio, PointRef end) {
 
 Direction GetDirection(PointRef point, PointRef resolver, PointRef center, bool inverse) {
     if (SamePoint(point, resolver))
-#if DEFAULT_MSVC
-        throw exception("None Occurred");
-#elif WSL_GCC
-    throw exception();
-#endif
-
+        SAFE_THROW("None Occurred");
     auto i = inverse ? -1 : 1;
 
     if (DoubleEquals(point.y, center.y)) {
