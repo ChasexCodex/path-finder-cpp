@@ -24,7 +24,7 @@ double Solver::Solve() {
         return lhs->distance < rhs->distance;
 #endif
     };
-    bool found;
+    bool found = false;
 #if ASTAR
     vector<Node *> paths(beginConnections.begin(), beginConnections.end());
     while (!paths.empty()) {

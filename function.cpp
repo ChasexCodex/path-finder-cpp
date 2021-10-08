@@ -6,8 +6,8 @@
 
 
 #if DEFAULT_MSVC
-#define SAFE_THROW(message) (throw std::exception((message)))
-#elif WSL_GCC
+#define SAFE_THROW(message) (throw std::exception((message))
+#else
 #define SAFE_THROW(message) (throw std::exception())
 #endif
 
@@ -466,7 +466,7 @@ Line *Line::IntersectionLineOfTwoCircles(CircleRef a, CircleRef b) {
 
     if (DoubleEquals(a.ctr.y, b.ctr.y))
         return new Line(INFINITY, ((b.ctr.x + a.ctr.x) + DifferenceOfSquares(a.r, b.r) / (b.ctr.x - a.ctr.x)) / 2);
-    return new Line((a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
+    return new Line(-(a.ctr.x - b.ctr.x) / (a.ctr.y - b.ctr.y),
                     (DifferenceOfSquares(b.ctr.x, a.ctr.x) + DifferenceOfSquares(b.ctr.y, a.ctr.y) +
                      DifferenceOfSquares(a.r, b.r))
                     / (2 * (b.ctr.y - a.ctr.y)));
@@ -613,7 +613,7 @@ double Solver::Solve() {
         return lhs->distance < rhs->distance;
 #endif
     };
-    bool found;
+    bool found = false;
 #if ASTAR
     vector<Node *> paths(beginConnections.begin(), beginConnections.end());
     while (!paths.empty()) {

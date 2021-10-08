@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 
 set(CMAKE_CXX_STANDARD 17)
-set(BUILD_LIBRARY true)
+set(BUILD_LIBRARY false)
 
 # SETTINGS TO MODIFY THE REQUIREMENTS OF THE PATH FINDER
 add_compile_definitions(INCLUDE_POINT_ON_CIRCLE_EDGE)
@@ -65,4 +65,4 @@ target_link_libraries("${CPP_PROJECT_NAME}" PRIVATE
         GTest::gmock_main
         GTest::gtest_main)
 
-add_test(GTest::gtest_main gtest_main)
+add_test("${CPP_PROJECT_NAME}" GTest::Main tests.cpp)
